@@ -18,16 +18,14 @@ export class ClienteSeeder implements Seeder {
       const data = await this.dataReader.read({
         path: "src/domain/cliente/data/clientes.json",
       });
+      const expectedLength = data.length;
       await Promise.all(
         data.map(async (cliente) => {
-          try {
-            await this.cadastrarClienteUseCase.execute(cliente);
-          } catch (error) {
-          }
+          return this.cadastrarClienteUseCase.execute(cliente);
         })
       );
 
-      return data.length;
+      return expectedLength;
     } catch (error) {
       throw error;
     }

@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
+    "test:dev": "cross-env NODE_ENV=development jest",
     "dev": "cross-env NODE_ENV=development nodemon src/index.ts",
     "start": "cross-env NODE_ENV=production nodemon src/infra/drivers/server.ts",
     "start:dev": "cross-env NODE_ENV=development nodemon src/infra/drivers/server.ts"

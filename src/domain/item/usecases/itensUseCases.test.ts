@@ -29,7 +29,7 @@ describe('Testando itens',()=>{
         descricao:
           "Hambúrguer (100% carne bovina), alface americana, queijo cheddar, maionese Big Mac, cebola, picles e pão com gergelim",
       };
-      const output = await editarItemUseCase.execute(newItemProps);
+      const output = await editarItemUseCase.execute({_id: itens[0]._id, props: newItemProps});
       expect(output).toMatchObject(newItemProps);
     }
   
