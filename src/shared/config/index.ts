@@ -13,4 +13,11 @@ export default {
     MONGO_PORT: emptyToUndefined(process.env.MONGO_PORT),
     MONGO_HOST: emptyToUndefined(process.env.MONGO_HOST),
   },
+  dynamo: {
+    DYNAMO_ACCESS_KEY_ID: emptyToUndefined(process.env.DYNAMO_ACCESS_KEY_ID),
+    DYNAMO_SECRET_ACCESS_KEY: emptyToUndefined(process.env.DYNAMO_SECRET_ACCESS_KEY),
+    DYNAMO_DATABASE: emptyToUndefined(process.env.DYNAMO_DATABASE),
+    DYNAMO_PORT: emptyToUndefined(process.env.DYNAMO_PORT),
+    DYNAMO_HOST: emptyToUndefined(process.env.DYNAMO_HOST),
+  }
 };
