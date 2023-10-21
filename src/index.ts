@@ -60,12 +60,6 @@ async function boostrapDynamoDatabase() {
   });
   await client.connect();
   clientesRepository = new ClienteDynamoRepository();
-  const item = new Cliente({
-    nome: 'André Luiz',
-    email: 'andre@appmarketing.com.br',
-  });
-  await clientesRepository.criar({item});
-  console.log(await clientesRepository.listar())
 }
 
 // SEEDERS =======================================================================

@@ -6,8 +6,6 @@ import { ClienteModel } from "@infra/database/mongodb/cliente/models/cliente.mon
 import mongoose from "mongoose"
 
 export class ClienteMongoRepository implements Repository<Cliente> {
-  constructor() {}
-
   async listar(): Promise<Cliente[]> {
     return ClienteModel.find({deletedAt: null})
   }

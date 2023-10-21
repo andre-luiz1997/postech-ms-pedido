@@ -28,23 +28,5 @@ export class DynamoConnection implements Connection {
     })
     dynamoose.aws.ddb.set(ddb);
     return true;
-    // return new Promise(async (resolve, reject) => {
-    //   const dynamoDBClient = new DynamoDBClient({
-    //     endpoint: `${this.props.host}:${this.props.port}`,
-    //     region: this.props.database,
-    //     credentials: {
-    //       accessKeyId: "localstack",
-    //       secretAccessKey: "localstack",
-    //     },
-    //   })
-
-    //   if (dynamoDBClient) {
-    //     DynamoConnection.dynamoDBClient = dynamoDBClient
-    //     DynamoConnection.isConnected = true
-    //     resolve(true)
-    //   } else {
-    //     reject(false)
-    //   }
-    // })
   }
 }

@@ -17,6 +17,11 @@ import { WebhookController } from "src/domain/webhook/controllers/WebhookControl
 import { WebhooksMongoRepository } from "src/infra/database/mongodb/pagamento/repositories/webhookMongoRepository.repository"
 import { WebhookMemoriaRepository } from "src/infra/database/memory/pagamento/repositories/webhookMemoria.repository"
 import { WebhookGatewayAdapter, WebhookGatewayType } from "src/domain/webhook/adapters/gatewayWebhook.adapter"
+import { ClienteDynamoRepository } from "src/infra/database/dynamodb/localstack/cliente/repositories/clientesDynamo.repository";
+import { ItemDynamoRepository } from "src/infra/database/dynamodb/localstack/item/repositories/itemDynamo.repository";
+import { PedidoDynamoRepository } from "src/infra/database/dynamodb/localstack/pedido/repositories/pedidoDynamo.repository";
+import { PagamentoDynamoRepository } from "src/infra/database/dynamodb/localstack/pagamento/repositories/pagamentoDynamo.repository";
+import { WebhookDynamoRepository } from "src/infra/database/dynamodb/localstack/pedido/repositories/webhookDynamoRepository.repository";
 
 export class ApiController {
   private static instance: ApiController
@@ -29,13 +34,30 @@ export class ApiController {
   webhookGateway: WebhookGatewayAdapter
 
   constructor() {
+    const isDynamoDatabase = config.NODE_ENV == "aws"
+    const isMongoDatabase = config.NODE_ENV == "production" || config.NODE_ENV == "debug"
     const debug = config.NODE_ENV == 'production' || config.NODE_ENV == 'debug';
-    let clienteRepo = debug ? new ClienteMemoriaRepository() : new ClienteMongoRepository();
-    let itemRepo = debug ? new ItemMemoriaRepository() : new ItemMongoRepository();
-    let pedidoRepo = debug ? new PedidoMemoriaRepository() : new PedidoMongoRepository(clienteRepo, itemRepo);
-    let pagamentosRepo = debug ? new PagamentoMemoriaRepository() : new PagamentosMongoRepository(pedidoRepo);
-    let webhookRepo = debug ? new WebhookMemoriaRepository() : new WebhooksMongoRepository(pedidoRepo);
+
+    let clienteRepo
+    let itemRepo
+    let pedidoRepo
+    let pagamentosRepo
+    let webhookRepo
     let webhookGateway = WebhookGatewayType.GatewayWebhookMock;
+
+    if(isDynamoDatabase) {
+      clienteRepo = new ClienteDynamoRepository();
+      itemRepo = new ItemDynamoRepository();
+      pedidoRepo = new PedidoDynamoRepository();
+      pagamentosRepo = new PagamentoDynamoRepository();
+      webhookRepo = new WebhookDynamoRepository();
+    } else {
+      clienteRepo = debug ? new ClienteMemoriaRepository() : new ClienteMongoRepository();
+      itemRepo = debug ? new ItemMemoriaRepository() : new ItemMongoRepository();
+      pedidoRepo = debug ? new PedidoMemoriaRepository() : new PedidoMongoRepository(clienteRepo, itemRepo);
+      pagamentosRepo = debug ? new PagamentoMemoriaRepository() : new PagamentosMongoRepository(pedidoRepo);
+      webhookRepo = debug ? new WebhookMemoriaRepository() : new WebhooksMongoRepository(pedidoRepo);
+    }
     
     this.webhookGateway = new WebhookGatewayAdapter(webhookGateway, webhookRepo);
     this.clienteController = new ClienteController(clienteRepo)
