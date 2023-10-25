@@ -1,4 +1,3 @@
-import { DynamoDBClient } from "@aws-sdk/client-dynamodb"
 import * as dynamoose from "dynamoose"
 import Connection, { ConnectionProps } from "src/shared/ports/connection"
 
@@ -11,22 +10,22 @@ export class DynamoConnection implements Connection {
   }
 
   async connect(): Promise<boolean> {
-    console.log({
-      region: this.props.database,
+
+    const ddb = new dynamoose.aws.ddb.DynamoDB({      
+      region: 'us-east-1',
       credentials: {
         accessKeyId: "localstack",
         secretAccessKey: "localstack",
       },
-    })
-    const ddb = new dynamoose.aws.ddb.DynamoDB({
-      region: this.props.database,
-      credentials: {
-        accessKeyId: "localstack",
-        secretAccessKey: "localstack",
+      endpoint: {
+        port: 4566,
+        hostname: "localstack_main",
+        path: '',
+        protocol: 'http:'
       },
-      endpoint: `${this.props.host}:${this.props.port}`,
     })
     dynamoose.aws.ddb.set(ddb);
+    
     return true;
   }
 }

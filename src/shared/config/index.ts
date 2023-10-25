@@ -1,7 +1,7 @@
 import * as dotenv from 'dotenv'
 import { emptyToUndefined } from '../utils';
-// dotenv.config({path: '../../../.env'})
-dotenv.config()
+dotenv.config({path: '../../../.env'})
+// dotenv.config()
 
 export default {
   NODE_ENV: emptyToUndefined(process.env.NODE_ENV),
