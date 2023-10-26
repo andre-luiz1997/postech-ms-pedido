@@ -1,4 +1,5 @@
 import * as dynamoose from "dynamoose"
+import config from "src/shared/config";
 import Connection, { ConnectionProps } from "src/shared/ports/connection"
 
 export class DynamoConnection implements Connection {
@@ -12,17 +13,12 @@ export class DynamoConnection implements Connection {
   async connect(): Promise<boolean> {
 
     const ddb = new dynamoose.aws.ddb.DynamoDB({      
-      region: 'us-east-1',
+      region: config.aws.AWS_REGION,
       credentials: {
-        accessKeyId: "localstack",
-        secretAccessKey: "localstack",
+        accessKeyId: config.aws.AWS_ACCESS_KEY_ID,
+        secretAccessKey: config.aws.AWS_SECRET_ACCESS_KEY,
       },
-      endpoint: {
-        port: 4566,
-        hostname: "localstack_main",
-        path: '',
-        protocol: 'http:'
-      },
+      endpoint: "",
     })
     dynamoose.aws.ddb.set(ddb);
     

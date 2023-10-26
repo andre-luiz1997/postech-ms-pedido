@@ -14,10 +14,12 @@ export default {
     MONGO_HOST: emptyToUndefined(process.env.MONGO_HOST),
   },
   dynamo: {
-    DYNAMO_ACCESS_KEY_ID: emptyToUndefined(process.env.DYNAMO_ACCESS_KEY_ID),
-    DYNAMO_SECRET_ACCESS_KEY: emptyToUndefined(process.env.DYNAMO_SECRET_ACCESS_KEY),
-    DYNAMO_DATABASE: emptyToUndefined(process.env.DYNAMO_DATABASE),
     DYNAMO_PORT: emptyToUndefined(process.env.DYNAMO_PORT),
     DYNAMO_HOST: emptyToUndefined(process.env.DYNAMO_HOST),
+  },
+  aws: {
+    AWS_ACCESS_KEY_ID: emptyToUndefined(process.env.AWS_ACCESS_KEY_ID),
+    AWS_SECRET_ACCESS_KEY: emptyToUndefined(process.env.AWS_SECRET_ACCESS_KEY),
+    AWS_REGION: emptyToUndefined(process.env.AWS_REGION),
   }
 };

@@ -38,7 +38,7 @@ function configureMongo() {
 
 function configureDynamo() {
   const _config = {
-    database: config.dynamo.DYNAMO_DATABASE,
+    database: config.dynamo.DYNAMO_REGION,
     user: config.dynamo.DYNAMO_ACCESS_KEY_ID,
     password: config.dynamo.DYNAMO_SECRET_ACCESS_KEY,
     port: +config.dynamo.DYNAMO_PORT,
