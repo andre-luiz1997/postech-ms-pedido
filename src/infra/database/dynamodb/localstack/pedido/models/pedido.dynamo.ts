@@ -12,8 +12,6 @@ const PedidoSchema = new Schema(
         deletedAt: { type: Date, required: false, default: null },
     },
     { timestamps: true }
-
-    )
-
+  )
 
 export const PedidoModel = model("Pedido", PedidoSchema);
