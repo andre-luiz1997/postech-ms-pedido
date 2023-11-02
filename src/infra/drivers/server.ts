@@ -8,7 +8,7 @@ import { DynamoConnection } from "../database/dynamodb/localstack/adapters/Dynam
 const isDynamoDatabase = config.NODE_ENV == "aws"
 const isMongoDatabase = config.NODE_ENV == "production" || config.NODE_ENV == "debug"
 const PORT = config.PORT || 3000;
-var cors = require('cors');
+const cors = require('cors');
 const app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());

@@ -14,8 +14,6 @@ import { ItemModel } from "@infra/database/mongodb/item/models/item.mongo"
 import mongoose from "mongoose"
 
 export class ItemMongoRepository implements Repository<Item> {
-  constructor() {}
-
   async listar(queryProps?: any): Promise<Item[]> {
     if(queryProps.deletedAt) delete queryProps.deletedAt
     return ItemModel.find({ deletedAt: null, ...queryProps })
