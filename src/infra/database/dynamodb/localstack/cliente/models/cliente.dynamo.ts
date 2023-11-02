@@ -1,9 +1,8 @@
 import {Schema, model} from "dynamoose";
-import { Cliente } from "@domain/cliente/entities/cliente";
 
 const ClienteSchema = new Schema(
   {
-    _id: { type: String },
+    _id: { type: String, hashKey: true },
     nome: { type: String, required: false },
     email: { type: String, required: false },
     cpf: { type: String, required: false },
@@ -12,4 +11,4 @@ const ClienteSchema = new Schema(
   { timestamps: true }
 );
 
-export const ClienteModel = model("Cliente", ClienteSchema);
+export const ClienteModel = model("Cliente", ClienteSchema, {create: true, waitForActive: true});

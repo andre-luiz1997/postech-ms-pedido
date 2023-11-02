@@ -46,42 +46,42 @@ export class ClienteDynamoRepository implements Repository<Cliente> {
   }
 
   async criar({ item }: CriarProps<Cliente>): Promise<Cliente> {
-    const isEmailUnique =
-      item.email &&
-      (await this.isUnique({
-        prop: "email",
-        value: item.email,
-      }))
-    if (isEmailUnique === false)
-      throw new RegistroExistenteException({
-        mensagem: `Já existe um registro com email ${item.email}`,
-      })
-    const isCpfUnique =
-      item.cpf &&
-      (await this.isUnique({
-        prop: "cpf",
-        value: item.cpf,
-      }))
-    if (isCpfUnique === false)
-      throw new RegistroExistenteException({
-        mensagem: `Já existe um registro com cpf ${item.cpf}`,
-      })
-    const isNomeUnique =
-      item.nome &&
-      (await this.isUnique({
-        prop: "nome",
-        value: item.nome,
-      }))
-    if (isNomeUnique === false)
-      throw new RegistroExistenteException({
-        mensagem: `Já existe um registro com nome ${item.nome}`,
-      })
-    const query = item._id && {
-      query: {
-        _id: item._id
-      }
-    }
-    if (item._id && await this.buscarUm({query})) throw new RegistroExistenteException({})
+    // const isEmailUnique =
+    //   item.email &&
+    //   (await this.isUnique({
+    //     prop: "email",
+    //     value: item.email,
+    //   }))
+    // if (isEmailUnique === false)
+    //   throw new RegistroExistenteException({
+    //     mensagem: `Já existe um registro com email ${item.email}`,
+    //   })
+    // const isCpfUnique =
+    //   item.cpf &&
+    //   (await this.isUnique({
+    //     prop: "cpf",
+    //     value: item.cpf,
+    //   }))
+    // if (isCpfUnique === false)
+    //   throw new RegistroExistenteException({
+    //     mensagem: `Já existe um registro com cpf ${item.cpf}`,
+    //   })
+    // const isNomeUnique =
+    //   item.nome &&
+    //   (await this.isUnique({
+    //     prop: "nome",
+    //     value: item.nome,
+    //   }))
+    // if (isNomeUnique === false)
+    //   throw new RegistroExistenteException({
+    //     mensagem: `Já existe um registro com nome ${item.nome}`,
+    //   })
+    // const query = item._id && {
+    //   query: {
+    //     _id: item._id
+    //   }
+    // }
+    // if (item._id && await this.buscarUm({query})) throw new RegistroExistenteException({})
     if(!item._id) item.generateId();
     const _item = await ClienteModel.create(item);
     await _item.save();
@@ -90,6 +90,7 @@ export class ClienteDynamoRepository implements Repository<Cliente> {
   
   async listar(): Promise<Cliente[]> {
     return new Promise<Cliente[]>(async (resolve, reject) => {
+      console.log('listar clientes');
       ClienteModel.scan().all().exec((err, data) => {
         if(err) reject(err);
         resolve(data.map(item => new Cliente(item as ClienteProps)));

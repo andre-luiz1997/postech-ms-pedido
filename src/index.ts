@@ -54,7 +54,7 @@ async function boostrapDynamoDatabase() {
   const client = new DynamoConnection({
     host: config.dynamo.DYNAMO_HOST,
     port: +config.dynamo.DYNAMO_PORT,
-    database: config.dynamo.DYNAMO_DATABASE,
+    database: config.dynamo.DYNAMO_REGION,
     user: config.dynamo.DYNAMO_ACCESS_KEY_ID,
     password: config.dynamo.DYNAMO_SECRET_ACCESS_KEY,
   });

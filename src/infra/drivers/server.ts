@@ -2,8 +2,10 @@ import * as express from "express";
 import * as bodyParser from "body-parser";
 import config from "@shared/config";
 import routes from "./routes";
+import dynamoose from 'dynamoose';
 import {MongoConnection} from "../database/mongodb/adapters/MongoConnection";
 import { DynamoConnection } from "../database/dynamodb/localstack/adapters/DynamoConnection";
+import { ClienteModel } from "../database/dynamodb/localstack/cliente/models/cliente.dynamo";
 
 const isDynamoDatabase = config.NODE_ENV == "aws"
 const isMongoDatabase = config.NODE_ENV == "production" || config.NODE_ENV == "debug"
@@ -35,14 +37,18 @@ function configureMongo() {
 }
 
 function configureDynamo() {
-  const client = new DynamoConnection({
-    database: config.dynamo.DYNAMO_DATABASE,
+  const _config = {
+    database: config.dynamo.DYNAMO_REGION,
     user: config.dynamo.DYNAMO_ACCESS_KEY_ID,
     password: config.dynamo.DYNAMO_SECRET_ACCESS_KEY,
     port: +config.dynamo.DYNAMO_PORT,
     host: config.dynamo.DYNAMO_HOST
-  });
-  return client.connect().then(() => configureRoutes())
+  }
+  const client = new DynamoConnection(_config);
+  return client.connect().then(() => {
+    configureRoutes()
+    ClienteModel.scan().exec().then(res => console.log(res)).catch(err => console.log(err))
+  })
 }
 
 async function bootstrap() {
