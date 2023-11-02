@@ -9,5 +9,6 @@ test('Deve cadastrar um cliente', async function () {
     const clientesSeeder = new ClienteSeeder(clientesRepository,clientesDataReader);
     const expectedLength = await clientesSeeder.seed();
     const output = await clientesRepository.listar();
+    console.log('output test');
     expect(output).toHaveLength(expectedLength);
 })
