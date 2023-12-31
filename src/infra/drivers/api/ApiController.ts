@@ -21,22 +21,19 @@ export class ApiController {
   constructor() {
     const isDynamoDatabase = config.NODE_ENV == "aws"
     const isMongoDatabase = config.NODE_ENV == "production" || config.NODE_ENV == "debug"
-    const debug = config.NODE_ENV == 'production' || config.NODE_ENV == 'debug';
 
     let clienteRepo
     let itemRepo
     let pedidoRepo
-    let pagamentosRepo
-    let webhookRepo
 
     if(isDynamoDatabase) {
       clienteRepo = new ClienteDynamoRepository();
       itemRepo = new ItemDynamoRepository();
       pedidoRepo = new PedidoDynamoRepository();
     } else {
-      clienteRepo = debug ? new ClienteMemoriaRepository() : new ClienteMongoRepository();
-      itemRepo = debug ? new ItemMemoriaRepository() : new ItemMongoRepository();
-      pedidoRepo = debug ? new PedidoMemoriaRepository() : new PedidoMongoRepository(clienteRepo, itemRepo);
+      clienteRepo = !isMongoDatabase ? new ClienteMemoriaRepository() : new ClienteMongoRepository();
+      itemRepo = !isMongoDatabase ? new ItemMemoriaRepository() : new ItemMongoRepository();
+      pedidoRepo = !isMongoDatabase ? new PedidoMemoriaRepository() : new PedidoMongoRepository(clienteRepo, itemRepo);
     }
     
     this.clienteController = new ClienteController(clienteRepo)

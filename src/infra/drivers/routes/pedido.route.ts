@@ -2,11 +2,12 @@ import * as express from "express"
 import { response } from "@infra/drivers/utils"
 import { ApiController } from "@infra/drivers/api/ApiController"
 import { PedidoDTO } from "@infra/drivers/dtos/pedido/pedido.dto"
+import { AuthInterceptor } from "./interceptors"
 const router = express.Router()
 
 const apiController = ApiController.Instance
 
-router.get("/", (req: express.Request, res: express.Response, next: express.NextFunction) => {
+router.get("/", AuthInterceptor.default, (req: express.Request, res: express.Response, next: express.NextFunction) => {
   return response(apiController.pedidoController.listar(req.query), res, next)
 })
 
