@@ -19,6 +19,7 @@ export default {
     DYNAMO_ACCESS_KEY_ID: emptyToUndefined(process.env.DYNAMO_ACCESS_KEY_ID),
     DYNAMO_PORT: emptyToUndefined(process.env.DYNAMO_PORT),
     DYNAMO_HOST: emptyToUndefined(process.env.DYNAMO_HOST),
+    DYNAMO_VAR: emptyToUndefined(process.env.DYNAMO_VAR),
   },
   aws: {
     AWS_ACCESS_KEY_ID: emptyToUndefined(process.env.AWS_ACCESS_KEY_ID),
