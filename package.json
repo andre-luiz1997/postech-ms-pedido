@@ -4,12 +4,18 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest",
+    "test": " jest  --passWithNoTests --silent --runInBand --watch",
     "test:dev": "cross-env NODE_ENV=development jest",
     "dev": "cross-env NODE_ENV=development nodemon src/index.ts",
     "aws": "cross-env NODE_ENV=aws nodemon src/infra/drivers/server.ts",
     "start": "cross-env NODE_ENV=production nodemon src/infra/drivers/server.ts",
-    "start:dev": "cross-env NODE_ENV=development nodemon src/infra/drivers/server.ts"
+    "start:dev": "cross-env NODE_ENV=development nodemon src/infra/drivers/server.ts",
+    "test:watch": "jest --passWithNoTests --runInBand --watch",
+    "test-verbose": "jest --passWithNoTests --runInBand --watch --silent=false",
+    "test-unit": "npm test -- --watch -c jest-unit-config.js",
+    "test-integration": "npm test -- --watch -c jest-integration-config.js",
+    "test-staged": "npm test -- --findRelatedTests",
+    "test-ci": "npm test -- --coverage"
   },
   "keywords": [],
   "author": "",

@@ -18,6 +18,7 @@ export class ClienteSeeder implements Seeder {
       const expectedLength = data.length;
       await Promise.all(
         data.map(async (cliente) => {
+          await this.repository.criar({ item: new Cliente(cliente) });
         })
       );
 

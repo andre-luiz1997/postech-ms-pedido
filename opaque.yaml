@@ -1,8 +1,0 @@
-apiVersion: v1
-kind: Secret
-metadata:
-  name: pos-tech-opaque
-type: Opaque
-data:
-  MONGO_DATABASE: dGVjaC1jaGFsbGVuZ2U=
-  MONGO_HOST: c3ZjLWRiLXBvcy10ZWNo

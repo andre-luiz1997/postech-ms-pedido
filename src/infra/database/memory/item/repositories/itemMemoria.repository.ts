@@ -15,7 +15,7 @@ export class ItemMemoriaRepository implements Repository<Item> {
   static itens: Item[] = []
 
   public static get Instance() {
-    return this.instance || (this.instance = new this())
+    return this.instance || (this.instance = new ItemMemoriaRepository())
   }
 
   async listar(queryProps?: any): Promise<Item[]> {
@@ -40,8 +40,10 @@ export class ItemMemoriaRepository implements Repository<Item> {
           _id: item._id,
         },
       }))
-    )
+    ) {
       throw new RegistroExistenteException({})
+    }
+      
     item.createdAt = new Date()
     item.updatedAt = new Date()
     if (!item._id) item.generateId()

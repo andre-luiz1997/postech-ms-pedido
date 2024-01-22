@@ -11,18 +11,19 @@ export class PedidoMemoriaRepository implements Repository<Pedido> {
   public static get Instance() {
     return this.instance || (this.instance = new this())
   }
-
-  async listar(queryProps?: any): Promise<Pedido[]> {
-    const statuses = [...statusPedidos].reverse();
-    return PedidoMemoriaRepository.pedidos.filter((item) => {
-      const filtro = !queryProps || queryProps.status == null || item.status === queryProps.status;
-      return !item.deletedAt && filtro;
-    }).sort((pedidoA, pedidoB) => {
-      const indiceA = statuses.indexOf(pedidoA.status);
-      const indiceB = statuses.indexOf(pedidoB.status);
-      
-      return indiceA - indiceB;
-  });
+  
+  async listar(queryProps?: {status: string}): Promise<Pedido[]> {
+    const statuses = [...statusPedidos].reverse()
+    return PedidoMemoriaRepository.pedidos
+    .filter((item) => {
+      const filtro = !queryProps || queryProps.status == null || item.status === queryProps.status
+      return !item.deletedAt && filtro
+    })
+    .sort((pedidoA, pedidoB) => {
+      const indiceA = statuses.indexOf(pedidoA.status)
+      const indiceB = statuses.indexOf(pedidoB.status)
+      return indiceA - indiceB
+    })
   }
 
   async deletar({ _id }: DeletarProps): Promise<boolean> {
@@ -33,8 +34,9 @@ export class PedidoMemoriaRepository implements Repository<Pedido> {
   }
 
   async criar({ item }: CriarProps<Pedido>): Promise<Pedido> {
-    if(!item.cliente || !item.itens || item.itens.length == 0) throw new DtoValidationException(['O pedido deve conter um cliente e no mínimo um item']);
-    if(!item._id) item.generateId();
+    if (!item.cliente || !item.itens || item.itens.length == 0)
+      throw new DtoValidationException(["O pedido deve conter um cliente e no mínimo um item"])
+    if (!item._id) item.generateId()
     PedidoMemoriaRepository.pedidos.push(item)
     return item
   }
@@ -42,9 +44,9 @@ export class PedidoMemoriaRepository implements Repository<Pedido> {
   async editar({ _id, item }: EditarProps<Pedido>): Promise<Pedido> {
     const itemIndex = PedidoMemoriaRepository.pedidos.findIndex((_item) => _item._id == _id)
     if (itemIndex < 0) throw new RegistroInexistenteException({})
-    let cliente = PedidoMemoriaRepository.pedidos[itemIndex]
+    let pedido = PedidoMemoriaRepository.pedidos[itemIndex]
     Object.entries(item).forEach(([key, value]) => {
-      cliente[key] = value
+      pedido[key] = value
     })
     return PedidoMemoriaRepository.pedidos[itemIndex]
   }

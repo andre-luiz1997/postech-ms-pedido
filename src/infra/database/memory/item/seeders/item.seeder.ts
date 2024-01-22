@@ -17,6 +17,7 @@ export class ItemSeeder implements Seeder {
       });
       await Promise.all(
         data.map(async (item) => {
+          await this.repository.criar({ item: new Item(item) });
         })
       );
 
