@@ -1,9 +1,5 @@
 version: "3"
 
-networks:
-  localstack_default:
-    external: true
-
 services:
   node:
     restart: always
