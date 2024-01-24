@@ -1,5 +1,10 @@
 version: "3"
 
+networks:
+  docker_network:
+    driver: bridge
+    name: docker_network
+
 services:
   node:
     restart: always
@@ -10,12 +15,20 @@ services:
       - ./:/code
     depends_on:
       - mongo
+    networks:
+      - docker_network
   mongo:
     image: mongo
+    restart: always
+    command: mongod --port 27018
     ports:
       - 27018:27018
     volumes:
-      - mongodb:/data/
+      - mongodb:/data/db
+    expose:
+      - 27018
+    networks:
+      - docker_network
   swagger-ui:
     depends_on:
       - node
@@ -27,5 +40,7 @@ services:
       - ./swagger:/usr/share/nginx/html/swagger
     environment:
       API_URL: /swagger/openapi.yaml
+    networks:
+      - docker_network
 volumes:
   mongodb:
