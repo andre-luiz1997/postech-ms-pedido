@@ -34,7 +34,9 @@ export class ItemMongoRepository implements Repository<Item> {
       }),
     })
     if (!isUnique) throw new RegistroExistenteException({ mensagem: "Já existe um item com os parâmetros informados" })
-    item._id = new mongoose.Types.ObjectId()
+    if(!item._id) {
+      item._id = new mongoose.Types.ObjectId()
+    }
     const _item = await ItemModel.create(item);
     return this.buscarUm({query: {_id: _item._id}})
   }

@@ -57,7 +57,9 @@ export class ClienteMongoRepository implements Repository<Cliente> {
     }
     const cliente = await this.buscarUm({ query })
     if (item._id && cliente) throw new RegistroExistenteException({})
-    item._id = new mongoose.Types.ObjectId()
+    if(!item._id) {
+      item._id = new mongoose.Types.ObjectId()
+    }
     const _item = await ClienteModel.create(item)
     return this.buscarUm({query: {_id: _item._id}})
   }

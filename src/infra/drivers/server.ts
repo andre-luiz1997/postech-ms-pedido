@@ -4,13 +4,20 @@ import config from "@shared/config"
 import routes from "./routes"
 import { MongoConnection } from "../database/mongodb/adapters/MongoConnection"
 import { response, sendError } from "./utils"
+import { RabbitQueue } from "../messaging/adapters/rabbitQueue"
 
 const isMongoDatabase = config.NODE_ENV == "production" || config.NODE_ENV == "debug"
 const PORT = config.PORT || 3000
 const cors = require("cors")
 const app = express()
+const queue = RabbitQueue.Instance;
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
+queue.connect().then(() => {
+  Object.entries(config.queue.queues)?.forEach(([key,value]) => {
+    queue.addQueue(value);
+  })
+})
 
 app.use(cors())
 

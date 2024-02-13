@@ -11,6 +11,7 @@ import { PedidoMemoriaRepository } from "src/infra/database/memory/pedido/reposi
 import { ClienteDynamoRepository } from "src/infra/database/dynamodb/localstack/cliente/repositories/clientesDynamo.repository";
 import { ItemDynamoRepository } from "src/infra/database/dynamodb/localstack/item/repositories/itemDynamo.repository";
 import { PedidoDynamoRepository } from "src/infra/database/dynamodb/localstack/pedido/repositories/pedidoDynamo.repository";
+import { RabbitQueue } from "src/infra/messaging/adapters/rabbitQueue";
 
 export class ApiController {
   private static instance: ApiController
@@ -21,6 +22,7 @@ export class ApiController {
   constructor() {
     const isDynamoDatabase = config.NODE_ENV == "aws"
     const isMongoDatabase = config.NODE_ENV == "production" || config.NODE_ENV == "debug"
+    const messagingQueue = RabbitQueue.Instance;
 
     let clienteRepo
     let itemRepo
@@ -36,9 +38,9 @@ export class ApiController {
       pedidoRepo = !isMongoDatabase ? new PedidoMemoriaRepository() : new PedidoMongoRepository(clienteRepo, itemRepo);
     }
     
-    this.clienteController = new ClienteController(clienteRepo)
+    this.clienteController = new ClienteController(clienteRepo, messagingQueue)
     this.itemController = new ItemController(itemRepo)
-    this.pedidoController = new PedidoController(pedidoRepo)
+    this.pedidoController = new PedidoController(pedidoRepo,clienteRepo, itemRepo, messagingQueue)
   }
 
   public static get Instance() {

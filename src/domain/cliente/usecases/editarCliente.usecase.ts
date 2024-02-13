@@ -14,6 +14,8 @@ export class EditarClienteUseCase implements UseCase<EditarClienteDto, OutputPro
     constructor(private readonly repository: Repository<Cliente>){}
 
     async execute({_id, props}: EditarClienteDto): Promise<OutputProps> {
+        const _item = await this.repository.buscarUm({query: {_id}});
+        if(!_item) return;
         if(!props.cpf && !props.email && !props.nome) throw new DtoValidationException(['Ao menos um dos campos é obrigatório']);
         if(props.cpf && !isCPFValido(props.cpf)) throw new CPFInvalidoException()
         if(props.cpf) props.cpf = sanitizar(props.cpf);
