@@ -16,41 +16,41 @@ import mongoose from "mongoose"
 export class ItemMongoRepository implements Repository<Item> {
   async listar(queryProps?: any): Promise<Item[]> {
     if(queryProps.deletedAt) delete queryProps.deletedAt
-    return ItemModel.find({ deletedAt: null, ...queryProps })
+    return ItemModel.find({ deletedAt: null, ...queryProps }, {}, {session: queryProps.transaction})
   }
 
-  async deletar({ _id }: DeletarProps): Promise<boolean> {
-    const item = await this.buscarUm({ query: { _id } })
+  async deletar({ _id, transaction }: DeletarProps): Promise<boolean> {
+    const item = await this.buscarUm({ query: { _id }, transaction })
     if (!item) throw new RegistroInexistenteException({ campo: "id" })
     item.deletedAt = new Date()
-    await ItemModel.updateOne({ _id }, item)
+    await ItemModel.updateOne({ _id }, item, {session: transaction})
     return true
   }
 
-  async criar({ item }: CriarProps<Item>): Promise<Item> {
+  async criar({ item, transaction }: CriarProps<Item>): Promise<Item> {
     const isUnique = await this.isUnique({
       props: Object.entries(item).map(([key, value]) => {
         return { prop: key, value }
       }),
+      transaction
     })
     if (!isUnique) throw new RegistroExistenteException({ mensagem: "Já existe um item com os parâmetros informados" })
-    if(!item._id) {
-      item._id = new mongoose.Types.ObjectId()
-    }
-    const _item = await ItemModel.create(item);
-    return this.buscarUm({query: {_id: _item._id}})
+    item._id = new mongoose.Types.ObjectId()
+    await ItemModel.create([item], {}, {session: transaction});
+    return this.buscarUm({query: {_id: item._id}, transaction})
   }
 
-  async editar({ _id, item }: EditarProps<Item>): Promise<Item> {
-    const query = {
+  async editar({ _id, item, transaction }: EditarProps<Item>): Promise<Item> {
+    const query: BuscarUmProps = {
       query: {
         _id,
       },
     }
+    if(transaction) query.transaction = transaction
     const _item = await this.buscarUm(query)
     if (!_item) throw new RegistroInexistenteException({ campo: "id" })
-    await ItemModel.updateOne({ _id }, item)
-    return this.buscarUm({query: {_id: _item._id}})
+    await ItemModel.updateOne({ _id }, item, {session: transaction})
+    return this.buscarUm({query: {_id: _item._id}, transaction })
   }
 
   async buscarUm(props: BuscarUmProps): Promise<Item | null> {
@@ -58,7 +58,7 @@ export class ItemMongoRepository implements Repository<Item> {
     if (!props.query?.deletedAt) {
       props.query.deletedAt = null;
     }
-    return ItemModel.findOne(props.query)
+    return ItemModel.findOne(props.query,{},{session: props.transaction})
   }
 
   async isUnique(props: IsUniqueManyProps): Promise<boolean> {
@@ -69,6 +69,7 @@ export class ItemMongoRepository implements Repository<Item> {
       }, {}),
     }
     if (props.ignoreId) query.query._id = { $ne: props.ignoreId }
+    if(props.transaction) query.transaction = props.transaction
     const item = await this.buscarUm(query)
     return item === null
   }

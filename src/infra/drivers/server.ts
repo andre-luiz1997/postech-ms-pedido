@@ -39,15 +39,16 @@ function configureRoutes() {
   })
 }
 
-function configureMongo() {
-  const client = new MongoConnection({
+async function configureMongo() {
+  MongoConnection.props = {
     database: config.mongo.MONGO_DATABASE,
     user: config.mongo.MONGO_USER,
     password: config.mongo.MONGO_PW,
     port: +config.mongo.MONGO_PORT,
-    host: config.mongo.MONGO_HOST,
-  })
-  return client.connect().then(() => configureRoutes())
+    host: config.mongo.MONGO_HOST
+  };
+  await MongoConnection.Instance.connect();
+  configureRoutes()
 }
 
 async function bootstrap() {

@@ -6,12 +6,16 @@ import { Cliente } from "src/domain/cliente/entities/cliente"
 import { IMessagingQueue } from "src/infra/messaging/ports/queue"
 import config from "src/shared/config"
 import { Item } from "src/domain/item/entities/item"
+import { CadastrarPedidoDto } from "../dtos/cadastrarPedido.dto"
 
-export interface CadastrarPedidoDto extends PedidoProps {}
+export interface InputProps {
+  body: CadastrarPedidoDto;
+  transaction?: any;
+}
 
 type OutputProps = Pedido
 
-export class CadastrarPedidoUseCase implements UseCase<CadastrarPedidoDto, OutputProps> {
+export class CadastrarPedidoUseCase implements UseCase<InputProps, OutputProps> {
   private queue: string;
   constructor(
     private readonly repository: Repository<Pedido>,
@@ -22,7 +26,7 @@ export class CadastrarPedidoUseCase implements UseCase<CadastrarPedidoDto, Outpu
     this.queue = config.queue.queues.queue3
   }
 
-  async execute(props: CadastrarPedidoDto): Promise<OutputProps> {
+  async execute({body: props, transaction}: InputProps): Promise<OutputProps> {
     if(!props.cliente || !props.itens || props.itens.length == 0) throw new DtoValidationException(['Registros obrigatórios do pedido não encontrados'])
     let item = new Pedido(props)
     let cliente = await this.clienteRepository.buscarUm({query: {_id: item.cliente._id}});

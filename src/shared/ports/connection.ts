@@ -6,7 +6,7 @@ export interface ConnectionProps {
   port?: number;
 }
 
-export default interface Connection {
-  props: ConnectionProps;
-  connect(): void;
+export default abstract class Connection {
+  static props: ConnectionProps;
+  abstract connect(): void;
 }

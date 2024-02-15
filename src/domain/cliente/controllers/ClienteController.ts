@@ -31,7 +31,6 @@ export class ClienteController {
     })
     this.messagingQueue.subscribeToQueue(config.queue.queues.queue2, (message: string) => {
       try {
-        console.log(message)
         const {_id, ...rest} = JSON.parse(message) as Cliente;
         this.deletarUseCase.execute(_id)
       } catch (error) {

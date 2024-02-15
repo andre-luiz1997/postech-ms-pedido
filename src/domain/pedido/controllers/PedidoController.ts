@@ -1,10 +1,12 @@
 import { Repository } from "@shared/ports/repository"
-import { CadastrarPedidoDto, CadastrarPedidoUseCase } from "@domain/pedido/usecases/cadastrarPedido.usecase"
-import { Pedido, PedidoProps } from "@domain/pedido/entities/pedido"
-import { EditarPedidoDto, EditarPedidoUseCase } from "@domain/pedido/usecases/editarPedido.usecase"
+import { CadastrarPedidoUseCase } from "@domain/pedido/usecases/cadastrarPedido.usecase"
+import { Pedido } from "@domain/pedido/entities/pedido"
+import { EditarPedidoUseCase } from "@domain/pedido/usecases/editarPedido.usecase"
 import { Cliente } from "src/domain/cliente/entities/cliente"
 import { IMessagingQueue } from "src/infra/messaging/ports/queue"
 import { Item } from "src/domain/item/entities/item"
+import { CadastrarPedidoDto } from "../dtos/cadastrarPedido.dto"
+import { EditarPedidoDto } from "../dtos/editarPedido.dto"
 
 export class PedidoController {
   private readonly cadastrarUseCase: CadastrarPedidoUseCase
@@ -35,11 +37,33 @@ export class PedidoController {
   }
 
   async criar(body: CadastrarPedidoDto) {
-    return this.cadastrarUseCase.execute(body)
+    const transaction = await this.repository.startTransaction()
+    try {
+      let res; 
+      await this.repository.inTransaction(transaction, async () => {
+        res = await this.cadastrarUseCase.execute({body, transaction});
+      })
+      await this.repository.commitTransaction(transaction)
+      return res
+    } catch (error) {
+      await this.repository.rollbackTransaction(transaction)
+      throw error
+    }
   }
 
   async editar(body: EditarPedidoDto) {
-    return this.editarUseCase.execute(body)
+    const transaction = await this.repository.startTransaction()
+    try {
+      let res; 
+      await this.repository.inTransaction(transaction, async () => {
+        res = await this.editarUseCase.execute({body, transaction});
+      })
+      await this.repository.commitTransaction(transaction)
+      return res
+    } catch (error) {
+      await this.repository.rollbackTransaction(transaction)
+      throw error
+    }
   }
 
   async deletar(_id: string) {
