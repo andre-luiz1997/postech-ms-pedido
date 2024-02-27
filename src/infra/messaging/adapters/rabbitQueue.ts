@@ -36,6 +36,7 @@ export class RabbitQueue implements IMessagingQueue {
 
     async connect(): Promise<boolean> {
         return new Promise<boolean>((resolve, reject) => {
+            console.log('rabbit queue', RabbitQueue.connectionString);
             rabbitMQ.connect(RabbitQueue.connectionString, (err, connection) => {
                 if(err) reject(err);
                 RabbitQueue.connection = connection;
