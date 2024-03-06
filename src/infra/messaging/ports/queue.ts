@@ -1,5 +1,6 @@
 
 export interface IMessagingQueueProps {
+    url?: string;
     host: string;
     port: string;
     user: string;

@@ -16,6 +16,7 @@ export class RabbitQueue implements IMessagingQueue {
 
     private constructor() {
         RabbitQueue.props = {
+            url: config.queue.url,
             host: config.queue.host,
             port: config.queue.port,
             password: config.queue.password,
@@ -25,7 +26,11 @@ export class RabbitQueue implements IMessagingQueue {
     }
 
     private createConnectionString() {
-        const {host, password, user, port} = RabbitQueue.props;
+        const {host, password, user, port, url} = RabbitQueue.props;
+        if(url) {
+            RabbitQueue.connectionString = url;
+            return;
+        }
         RabbitQueue.connectionString = `${host}:${port}`;
         if (emptyToUndefined(user) && emptyToUndefined(password)) {
             RabbitQueue.connectionString = `${user}:${password}@${RabbitQueue.connectionString}`;
