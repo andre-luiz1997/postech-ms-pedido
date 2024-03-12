@@ -7,7 +7,7 @@ const router = express.Router()
 
 const apiController = ApiController.Instance
 
-router.get("/", AuthInterceptor.default, (req: express.Request, res: express.Response, next: express.NextFunction) => {
+router.get("/", (req: express.Request, res: express.Response, next: express.NextFunction) => {
   return response(apiController.pedidoController.listar(req.query), res, next)
 })
 
