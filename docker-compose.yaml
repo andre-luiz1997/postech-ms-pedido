@@ -33,6 +33,11 @@ services:
       retries: 30
     volumes:
       - mongodb:/data/
+      - mongodb_config:/data/configdb
+    expose:
+      - 27018
+    networks:
+      - docker_network
   swagger-ui:
     depends_on:
       - node
@@ -48,3 +53,4 @@ services:
       - docker_network
 volumes:
   mongodb:
+  mongodb_config:
