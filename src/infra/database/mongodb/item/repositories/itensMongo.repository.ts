@@ -12,6 +12,7 @@ import { Item } from "@domain/item/entities/item"
 import { RegistroInexistenteException } from "@shared/exceptions/registroInexistente.exception"
 import { ItemModel } from "@infra/database/mongodb/item/models/item.mongo"
 import mongoose from "mongoose"
+import { MongoConnection } from "../../adapters/MongoConnection"
 
 export class ItemMongoRepository implements Repository<Item> {
   async listar(queryProps?: any): Promise<Item[]> {
@@ -54,11 +55,12 @@ export class ItemMongoRepository implements Repository<Item> {
   }
 
   async buscarUm(props: BuscarUmProps): Promise<Item | null> {
-    if(!props.query) props.query = {};
-    if (!props.query?.deletedAt) {
-      props.query.deletedAt = null;
+    if(!props.query) props.query = {query: {}};
+    if(!props.query.query) props.query.query = {};
+    if (!props.query?.query?.deletedAt) {
+      props.query.query.deletedAt = null;
     }
-    return ItemModel.findOne(props.query,{},{session: props.transaction})
+    return ItemModel.findOne(props.query.query,{},{session: props.transaction})
   }
 
   async isUnique(props: IsUniqueManyProps): Promise<boolean> {
@@ -72,5 +74,31 @@ export class ItemMongoRepository implements Repository<Item> {
     if(props.transaction) query.transaction = props.transaction
     const item = await this.buscarUm(query)
     return item === null
+  }
+
+  async startTransaction() {
+    return new Promise<any>((resolve) => resolve(null));
+    // const session = await MongoConnection.Instance.connection.startSession();
+    // session.startTransaction({
+    //   session
+    // })
+    // return session;
+  }
+
+  async commitTransaction(transaction: mongoose.mongo.ClientSession) {
+    if(!transaction) return;
+    if(!transaction.inTransaction()) return;
+    return transaction.commitTransaction();
+  }
+
+  async rollbackTransaction(transaction: mongoose.mongo.ClientSession) {
+    if(!transaction) return;
+    if(!transaction.inTransaction()) return;
+    return transaction.abortTransaction() 
+  }
+
+  async inTransaction(transaction: mongoose.mongo.ClientSession, callback: () => Promise<any>) {
+    if(!transaction) return callback();
+    return MongoConnection.Instance.connection.transaction(callback);
   }
 }

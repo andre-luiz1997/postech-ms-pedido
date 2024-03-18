@@ -142,11 +142,12 @@ export class PedidoMongoRepository implements Repository<Pedido> {
   }
 
   async buscarUm(props: BuscarUmProps): Promise<Pedido | null> {
-    if (!props.query) props.query = {}
-    if (!props.query?.deletedAt) {
-      props.query.deletedAt = null
+    if(!props.query) props.query = {query: {}};
+    if(!props.query.query) props.query.query = {};
+    if (!props.query?.query?.deletedAt) {
+      props.query.query.deletedAt = null;
     }
-    return PedidoModel.findOne(props.query).populate('cliente').populate({ path: 'itens', populate: 'item' }).session(props.transaction)
+    return PedidoModel.findOne(props.query.query).populate('cliente').populate({ path: 'itens', populate: 'item' }).session(props.transaction)
   }
 
   async isUnique(props: IsUniqueManyProps): Promise<boolean> {
@@ -163,24 +164,28 @@ export class PedidoMongoRepository implements Repository<Pedido> {
   }
 
   async startTransaction() {
-    const session = await MongoConnection.Instance.connection.startSession();
-    session.startTransaction({
-      session
-    })
-    return session;
+    return new Promise<any>((resolve) => resolve(null));
+    // const session = await MongoConnection.Instance.connection.startSession();
+    // session.startTransaction({
+    //   session
+    // })
+    // return session;
   }
 
   async commitTransaction(transaction: mongoose.mongo.ClientSession) {
-    if (!transaction.inTransaction()) return;
+    if(!transaction) return;
+    if(!transaction.inTransaction()) return;
     return transaction.commitTransaction();
   }
 
   async rollbackTransaction(transaction: mongoose.mongo.ClientSession) {
-    if (!transaction.inTransaction()) return;
-    return transaction.abortTransaction()
+    if(!transaction) return;
+    if(!transaction.inTransaction()) return;
+    return transaction.abortTransaction() 
   }
 
   async inTransaction(transaction: mongoose.mongo.ClientSession, callback: () => Promise<any>) {
+    if(!transaction) return callback();
     return MongoConnection.Instance.connection.transaction(callback);
   }
 }
