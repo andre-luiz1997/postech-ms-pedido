@@ -21,50 +21,50 @@ export class ClienteMongoRepository implements Repository<Cliente> {
   }
 
   async criar({item, transaction}: CriarProps<Cliente>): Promise<Cliente> {
-    const isEmailUnique =
-      item.email &&
-      (await this.isUnique({
-        prop: "email",
-        value: item.email,
-        transaction
-      }))
-    if (isEmailUnique === false)
-      throw new RegistroExistenteException({
-        mensagem: `Já existe um registro com email ${item.email}`,
-      })
-    const isCpfUnique =
-      item.cpf &&
-      (await this.isUnique({
-        prop: "cpf",
-        value: item.cpf,
-        transaction
-      }))
-    if (isCpfUnique === false)
-      throw new RegistroExistenteException({
-        mensagem: `Já existe um registro com cpf ${item.cpf}`,
-      })
-    const isNomeUnique =
-      item.nome &&
-      (await this.isUnique({
-        prop: "nome",
-        value: item.nome,
-        transaction
-      }))
-    if (isNomeUnique === false)
-      throw new RegistroExistenteException({
-        mensagem: `Já existe um registro com nome ${item.nome}`,
-      })
+    // const isEmailUnique =
+    //   item.email &&
+    //   (await this.isUnique({
+    //     prop: "email",
+    //     value: item.email,
+    //     transaction
+    //   }))
+    // if (isEmailUnique === false)
+    //   throw new RegistroExistenteException({
+    //     mensagem: `Já existe um registro com email ${item.email}`,
+    //   })
+    // const isCpfUnique =
+    //   item.cpf &&
+    //   (await this.isUnique({
+    //     prop: "cpf",
+    //     value: item.cpf,
+    //     transaction
+    //   }))
+    // if (isCpfUnique === false)
+    //   throw new RegistroExistenteException({
+    //     mensagem: `Já existe um registro com cpf ${item.cpf}`,
+    //   })
+    // const isNomeUnique =
+    //   item.nome &&
+    //   (await this.isUnique({
+    //     prop: "nome",
+    //     value: item.nome,
+    //     transaction
+    //   }))
+    // if (isNomeUnique === false)
+    //   throw new RegistroExistenteException({
+    //     mensagem: `Já existe um registro com nome ${item.nome}`,
+    //   })
 
-    const query = item._id && {
-      query: {
-        _id: new mongoose.Types.ObjectId(item._id),
-      },
-    }
-    const cliente = await this.buscarUm({ query, transaction })
-    if (item._id && cliente) throw new RegistroExistenteException({})
+    // const query = item._id && {
+    //   query: {
+    //     _id: new mongoose.Types.ObjectId(item._id),
+    //   },
+    // }
+    // const cliente = await this.buscarUm({ query, transaction })
+    // if (item._id && cliente) throw new RegistroExistenteException({})
     item._id = new mongoose.Types.ObjectId()
     await ClienteModel.create([item],{session: transaction})
-    return this.buscarUm({query: {_id: item._id},transaction})
+    return this.buscarUm({query: {query: {_id: item._id}},transaction})
   }
 
   async editar({ _id, item, transaction }: EditarProps<Cliente>): Promise<Cliente> {

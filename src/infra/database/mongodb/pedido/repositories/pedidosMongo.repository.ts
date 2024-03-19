@@ -120,7 +120,7 @@ export class PedidoMongoRepository implements Repository<Pedido> {
     }
 
     const _item = await PedidoModel.create([item],{},{session: transaction})
-    return this.buscarUm({ query: { _id: item._id }, transaction })
+    return this.buscarUm({ query: { query: {_id: item._id} }, transaction })
   }
 
   async editar({ _id, item, transaction }: EditarProps<Pedido>): Promise<Pedido> {

@@ -29,16 +29,16 @@ export class ItemMongoRepository implements Repository<Item> {
   }
 
   async criar({ item, transaction }: CriarProps<Item>): Promise<Item> {
-    const isUnique = await this.isUnique({
-      props: Object.entries(item).map(([key, value]) => {
-        return { prop: key, value }
-      }),
-      transaction
-    })
-    if (!isUnique) throw new RegistroExistenteException({ mensagem: "Já existe um item com os parâmetros informados" })
+    // const isUnique = await this.isUnique({
+    //   props: Object.entries(item).map(([key, value]) => {
+    //     return { prop: key, value }
+    //   }),
+    //   transaction
+    // })
+    // if (!isUnique) throw new RegistroExistenteException({ mensagem: "Já existe um item com os parâmetros informados" })
     item._id = new mongoose.Types.ObjectId()
     await ItemModel.create([item], {}, {session: transaction});
-    return this.buscarUm({query: {_id: item._id}, transaction})
+    return this.buscarUm({query: {query: {_id: item._id}}, transaction})
   }
 
   async editar({ _id, item, transaction }: EditarProps<Item>): Promise<Item> {
